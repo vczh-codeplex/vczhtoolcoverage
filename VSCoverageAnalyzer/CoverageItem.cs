@@ -285,6 +285,10 @@ namespace VSCoverageAnalyzer
             }
         }
 
+        public void SetFilter(string filter)
+        {
+        }
+
         public void SetAllVisible()
         {
             this.Visible = true;

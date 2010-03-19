@@ -236,5 +236,50 @@ namespace VSCoverageAnalyzer
                     break;
             }
         }
+
+        private void hideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listViewResults.SelectedItems)
+            {
+                (item.Tag as CoverageItem).Visible = false;
+            }
+            ReloadItems();
+        }
+
+        private void setFilterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void clearFilterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listViewResults.SelectedItems)
+            {
+                (item.Tag as CoverageItem).SetFilter(null);
+            }
+            ReloadItems();
+        }
+
+        private void setAllVisibleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listViewResults.SelectedItems)
+            {
+                (item.Tag as CoverageItem).SetAllVisible();
+            }
+            ReloadItems();
+        }
+
+        private void cancelAllFiltersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.profile.SetAllVisible();
+            ReloadItems();
+        }
+
+        private void importFiltersToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void exportFiltersToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+        }
     }
 }
