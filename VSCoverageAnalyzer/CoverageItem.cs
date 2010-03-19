@@ -9,7 +9,7 @@ using System.Xml;
 
 namespace VSCoverageAnalyzer
 {
-    enum CoverageType
+    public enum CoverageType
     {
         Profile,
         Module,
@@ -18,7 +18,7 @@ namespace VSCoverageAnalyzer
         Method
     }
 
-    class CoverageItem
+    public class CoverageItem
     {
         private List<CoverageItem> items = new List<CoverageItem>();
         private CoverageFilter filter = null;
@@ -313,6 +313,30 @@ namespace VSCoverageAnalyzer
                     {
                         item.Visible = this.filter.Pass(item);
                     }
+                }
+            }
+        }
+
+        public void Hide()
+        {
+            if (this.Parent != null)
+            {
+                CoverageFilterFunction function = new CoverageFilterFunction()
+                {
+                    Function = CoverageFilterFunctions.NotEqual,
+                    Parameter = this.Name
+                };
+                if (this.Parent.Filter == null)
+                {
+                    this.Parent.Filter = function;
+                }
+                else
+                {
+                    this.Parent.Filter = new CoverageFilterAnd()
+                    {
+                        Left = function,
+                        Right = this.Parent.Filter
+                    };
                 }
             }
         }

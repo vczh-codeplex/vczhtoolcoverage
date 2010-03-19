@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace VSCoverageAnalyzer
 {
-    abstract class CoverageFilter
+    public abstract class CoverageFilter
     {
         public abstract bool Pass(CoverageItem item);
         public abstract XElement GetXml();

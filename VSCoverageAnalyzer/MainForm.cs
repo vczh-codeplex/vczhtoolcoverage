@@ -178,9 +178,16 @@ namespace VSCoverageAnalyzer
         {
             if (dialogOpen.ShowDialog() == DialogResult.OK)
             {
-                XDocument document = XDocument.Load(dialogOpen.FileName);
-                this.profile = CoverageReader.GetModules(document);
-                ReloadItems();
+                try
+                {
+                    XDocument document = XDocument.Load(dialogOpen.FileName);
+                    this.profile = CoverageReader.GetModules(document);
+                    ReloadItems();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
@@ -226,7 +233,7 @@ namespace VSCoverageAnalyzer
                 case Keys.Delete:
                     foreach (ListViewItem item in listViewResults.SelectedItems)
                     {
-                        (item.Tag as CoverageItem).Visible = false;
+                        (item.Tag as CoverageItem).Hide();
                     }
                     ReloadItems();
                     break;
@@ -241,13 +248,20 @@ namespace VSCoverageAnalyzer
         {
             foreach (ListViewItem item in listViewResults.SelectedItems)
             {
-                (item.Tag as CoverageItem).Visible = false;
+                (item.Tag as CoverageItem).Hide();
             }
             ReloadItems();
         }
 
         private void setFilterToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            using (FilterForm form = new FilterForm(listViewResults.SelectedItems[0].Tag as CoverageItem))
+            {
+                if (form.ShowDialog() == DialogResult.OK)
+                {
+                    ReloadItems();
+                }
+            }
         }
 
         private void clearFilterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -276,10 +290,30 @@ namespace VSCoverageAnalyzer
 
         private void importFiltersToolStripMenuItem1_Click(object sender, EventArgs e)
         {
+            if (dialogOpen.ShowDialog() == DialogResult.OK)
+            {
+            }
         }
 
         private void exportFiltersToolStripMenuItem2_Click(object sender, EventArgs e)
         {
+            if (dialogSave.ShowDialog() == DialogResult.OK)
+            {
+            }
+        }
+
+        private void contextMenuResults_Opening(object sender, CancelEventArgs e)
+        {
+            bool selectOne = listViewResults.SelectedIndices.Count == 1;
+            bool selected = listViewResults.SelectedIndices.Count > 0;
+            bool selectedProfiler = listViewResults.SelectedItems.Cast<ListViewItem>()
+                .Select(i => i.Tag as CoverageItem)
+                .Any(i => i.Parent == null);
+
+            hideToolStripMenuItem.Enabled = selected && !selectedProfiler;
+            setFilterToolStripMenuItem.Enabled = selectOne && !selectedProfiler;
+            clearFilterToolStripMenuItem.Enabled = selected && !selectedProfiler;
+            setAllVisibleToolStripMenuItem.Enabled = selected && !selectedProfiler;
         }
     }
 }
