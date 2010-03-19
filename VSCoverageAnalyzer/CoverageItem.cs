@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using System.IO;
+using System.Xml;
 
 namespace VSCoverageAnalyzer
 {
@@ -18,6 +21,7 @@ namespace VSCoverageAnalyzer
     class CoverageItem
     {
         private List<CoverageItem> items = new List<CoverageItem>();
+        private CoverageFilter filter = null;
 
         private int calculatePercent(int value, int total)
         {
@@ -259,6 +263,8 @@ namespace VSCoverageAnalyzer
 
         #endregion
 
+        #region Operations
+
         public void BuildControlItems(int level, string[] columns)
         {
             this.ControlItem = new ListViewItem()
@@ -285,8 +291,30 @@ namespace VSCoverageAnalyzer
             }
         }
 
-        public void SetFilter(string filter)
+        public CoverageFilter Filter
         {
+            get
+            {
+                return this.filter;
+            }
+            set
+            {
+                this.filter = value;
+                if (this.filter == null)
+                {
+                    foreach (CoverageItem item in this.items)
+                    {
+                        item.Visible = true;
+                    }
+                }
+                else
+                {
+                    foreach (CoverageItem item in this.items)
+                    {
+                        item.Visible = this.filter.Pass(item);
+                    }
+                }
+            }
         }
 
         public void SetAllVisible()
@@ -297,6 +325,18 @@ namespace VSCoverageAnalyzer
                 item.SetAllVisible();
             }
         }
+
+        public XDocument GetFilterXmlDocument()
+        {
+            return this.filter == null ? new XDocument(new XElement("true")) : this.filter.GetXmlDocument();
+        }
+
+        public void SetFilterXmlDocument(XDocument document)
+        {
+            this.Filter = CoverageFilter.FromXml(document);
+        }
+
+        #endregion
 
         public static string[] Properties
         {

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{CD56172A-F2CE-4015-8DA3-0F058355FA8B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
@@ -55,6 +55,7 @@
     <Compile Include="ColumnSelectorForm.Designer.cs">
       <DependentUpon>ColumnSelectorForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="CoverageFilter.cs" />
     <Compile Include="CoverageItem.cs" />
     <Compile Include="CoverageReader.cs" />
     <Compile Include="MainForm.cs">

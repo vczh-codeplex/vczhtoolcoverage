@@ -254,7 +254,7 @@ namespace VSCoverageAnalyzer
         {
             foreach (ListViewItem item in listViewResults.SelectedItems)
             {
-                (item.Tag as CoverageItem).SetFilter(null);
+                (item.Tag as CoverageItem).Filter = null;
             }
             ReloadItems();
         }
