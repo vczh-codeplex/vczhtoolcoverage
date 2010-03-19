@@ -29,7 +29,7 @@ namespace VSCoverageAnalyzer
                 return new CoverageFilterOr()
                 {
                     Left = FromXml(element.Elements().ToArray()[0]),
-                    Right = FromXml(element.Elements().ToArray()[0])
+                    Right = FromXml(element.Elements().ToArray()[1])
                 };
             }
             else if (element.Name == "and")
@@ -37,7 +37,7 @@ namespace VSCoverageAnalyzer
                 return new CoverageFilterAnd()
                 {
                     Left = FromXml(element.Elements().ToArray()[0]),
-                    Right = FromXml(element.Elements().ToArray()[0])
+                    Right = FromXml(element.Elements().ToArray()[1])
                 };
             }
             else

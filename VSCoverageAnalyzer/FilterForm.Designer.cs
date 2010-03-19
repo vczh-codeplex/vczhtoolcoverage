@@ -71,10 +71,8 @@
             // 
             // FilterForm
             // 
-            this.AcceptButton = this.buttonOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.buttonCancel;
             this.ClientSize = new System.Drawing.Size(390, 367);
             this.Controls.Add(this.textBoxFilter);
             this.Controls.Add(this.buttonCancel);
