@@ -55,6 +55,14 @@ namespace VSCoverageAnalyzer
         public string Name { get; set; }
         public bool Opening { get; set; }
 
+        public int VisibleSubItems
+        {
+            get
+            {
+                return (this.items.Count == 0 || !this.Opening) ? 0 : this.items.Select(i => i.VisibleSubItems + 1).Sum();
+            }
+        }
+
         public CoverageItem[] Items
         {
             get
@@ -108,7 +116,8 @@ namespace VSCoverageAnalyzer
             {
                 Text = this.Name,
                 IndentCount = level,
-                ImageIndex = CoverageTypeToImageIndex(this.CoverageType)
+                ImageIndex = CoverageTypeToImageIndex(this.CoverageType),
+                Tag = this
             };
             foreach (string column in columns)
             {
@@ -120,6 +129,10 @@ namespace VSCoverageAnalyzer
                 {
                     this.ControlItem.SubItems.Add(this[column].ToString());
                 }
+            }
+            foreach (CoverageItem item in this.items)
+            {
+                item.BuildControlItems(level + 1, columns);
             }
         }
 

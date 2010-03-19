@@ -8,13 +8,14 @@ namespace VSCoverageAnalyzer
 {
     static class CoverageReader
     {
-        private static CoverageItem FillProperties(XElement element, CoverageItem item)
+        private static CoverageItem FillProperties(XElement element, string nameProperty, CoverageItem item)
         {
-            item.BlocksCovered = int.Parse(element.Attribute("BlocksCovered").Value);
-            item.BlocksNotCovered = int.Parse(element.Attribute("BlocksNotCovered").Value);
-            item.LinesCovered = int.Parse(element.Attribute("LinesCovered").Value);
-            item.LinesNotCovered = int.Parse(element.Attribute("LinesNotCovered").Value);
-            item.LinesPartiallyCovered = int.Parse(element.Attribute("LinesPartiallyCovered").Value);
+            item.BlocksCovered = int.Parse(element.Element("BlocksCovered").Value);
+            item.BlocksNotCovered = int.Parse(element.Element("BlocksNotCovered").Value);
+            item.LinesCovered = int.Parse(element.Element("LinesCovered").Value);
+            item.LinesNotCovered = int.Parse(element.Element("LinesNotCovered").Value);
+            item.LinesPartiallyCovered = int.Parse(element.Element("LinesPartiallyCovered").Value);
+            item.Name = element.Element(nameProperty).Value;
             return item;
         }
 
@@ -22,26 +23,25 @@ namespace VSCoverageAnalyzer
         {
             return document.Root.Elements("Module")
                 .Select(xModule =>
-                    FillProperties(xModule, new CoverageItem()
+                    FillProperties(xModule, "ModuleName", new CoverageItem()
                     {
                         CoverageType = CoverageType.Module,
-                        Items = xModule.Elements("Namespace")
+                        Items = xModule.Elements("NamespaceTable")
                             .Select(xNamespace =>
-                                FillProperties(xNamespace, new CoverageItem()
+                                FillProperties(xNamespace, "NamespaceName", new CoverageItem()
                                 {
                                     CoverageType = CoverageType.Namespace,
-                                    Items = xModule.Elements("Class")
+                                    Items = xNamespace.Elements("Class")
                                         .Select(xClass =>
-                                            FillProperties(xClass, new CoverageItem()
+                                            FillProperties(xClass, "ClassName", new CoverageItem()
                                             {
                                                 CoverageType = CoverageType.Class,
-                                                Items = xModule.Elements("Method")
+                                                Items = xClass.Elements("Method")
                                                     .Select(xMethod =>
-                                                        FillProperties(xMethod,
-                                                            new CoverageItem()
-                                                            {
-                                                                CoverageType = CoverageType.Module,
-                                                            })
+                                                        FillProperties(xMethod, "MethodName", new CoverageItem()
+                                                        {
+                                                            CoverageType = CoverageType.Method,
+                                                        })
                                                         )
                                                     .ToArray()
                                             })
