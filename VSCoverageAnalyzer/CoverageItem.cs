@@ -73,10 +73,15 @@ namespace VSCoverageAnalyzer
             {
                 this.items.Clear();
                 this.items.AddRange(value);
+                foreach (CoverageItem item in this.items)
+                {
+                    item.Parent = this;
+                }
             }
         }
 
         public ListViewItem ControlItem { get; private set; }
+        public CoverageItem Parent { get; private set; }
 
         public int this[string property]
         {
