@@ -8,6 +8,7 @@ namespace VSCoverageAnalyzer
 {
     enum CoverageType
     {
+        Profile,
         Module,
         Namespace,
         Class,
@@ -27,14 +28,16 @@ namespace VSCoverageAnalyzer
         {
             switch (type)
             {
-                case CoverageType.Module:
+                case CoverageType.Profile:
                     return 0;
-                case CoverageType.Namespace:
+                case CoverageType.Module:
                     return 1;
-                case CoverageType.Class:
+                case CoverageType.Namespace:
                     return 2;
-                case CoverageType.Method:
+                case CoverageType.Class:
                     return 3;
+                case CoverageType.Method:
+                    return 4;
                 default:
                     return -1;
             }
@@ -44,16 +47,155 @@ namespace VSCoverageAnalyzer
         {
             this.Name = "";
             this.Opening = false;
+            this.Visible = true;
         }
 
+        #region Data
+
+        private int propertyBlocksCovered = 0;
+        private int propertyBlocksNotCovered = 0;
+        private int propertyLinesCovered = 0;
+        private int propertyLinesNotCovered = 0;
+        private int propertyLinesPartiallyCovered = 0;
+
+        public int BlocksCovered
+        {
+            get
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    return this.propertyBlocksCovered;
+                }
+                else
+                {
+                    return this.items.Where(i => i.Visible).Select(i => i.BlocksCovered).Sum();
+                }
+            }
+            set
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    this.propertyBlocksCovered = value;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+
+        public int BlocksNotCovered
+        {
+            get
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    return this.propertyBlocksNotCovered;
+                }
+                else
+                {
+                    return this.items.Where(i => i.Visible).Select(i => i.BlocksNotCovered).Sum();
+                }
+            }
+            set
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    this.propertyBlocksNotCovered = value;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+
+        public int LinesCovered
+        {
+            get
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    return this.propertyLinesCovered;
+                }
+                else
+                {
+                    return this.items.Where(i => i.Visible).Select(i => i.LinesCovered).Sum();
+                }
+            }
+            set
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    this.propertyLinesCovered = value;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+
+        public int LinesNotCovered
+        {
+            get
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    return this.propertyLinesNotCovered;
+                }
+                else
+                {
+                    return this.items.Where(i => i.Visible).Select(i => i.LinesNotCovered).Sum();
+                }
+            }
+            set
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    this.propertyLinesNotCovered = value;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+
+        public int LinesPartiallyCovered
+        {
+            get
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    return this.propertyLinesPartiallyCovered;
+                }
+                else
+                {
+                    return this.items.Where(i => i.Visible).Select(i => i.LinesPartiallyCovered).Sum();
+                }
+            }
+            set
+            {
+                if (this.CoverageType == CoverageType.Method)
+                {
+                    this.propertyLinesPartiallyCovered = value;
+                }
+                else
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
         public CoverageType CoverageType { get; set; }
-        public int BlocksCovered { get; set; }
-        public int BlocksNotCovered { get; set; }
-        public int LinesCovered { get; set; }
-        public int LinesNotCovered { get; set; }
-        public int LinesPartiallyCovered { get; set; }
         public string Name { get; set; }
         public bool Opening { get; set; }
+        public bool Visible { get; set; }
 
         public int VisibleSubItems
         {
@@ -115,6 +257,8 @@ namespace VSCoverageAnalyzer
             }
         }
 
+        #endregion
+
         public void BuildControlItems(int level, string[] columns)
         {
             this.ControlItem = new ListViewItem()
@@ -138,6 +282,15 @@ namespace VSCoverageAnalyzer
             foreach (CoverageItem item in this.items)
             {
                 item.BuildControlItems(level + 1, columns);
+            }
+        }
+
+        public void SetAllVisible()
+        {
+            this.Visible = true;
+            foreach (CoverageItem item in this.items)
+            {
+                item.SetAllVisible();
             }
         }
 

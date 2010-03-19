@@ -56,15 +56,17 @@
             this.listViewResults.View = System.Windows.Forms.View.Details;
             this.listViewResults.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.listViewResults_MouseDoubleClick);
             this.listViewResults.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.listViewResults_ColumnClick);
+            this.listViewResults.KeyUp += new System.Windows.Forms.KeyEventHandler(this.listViewResults_KeyUp);
             // 
             // imageListComponent
             // 
             this.imageListComponent.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageListComponent.ImageStream")));
             this.imageListComponent.TransparentColor = System.Drawing.Color.Fuchsia;
-            this.imageListComponent.Images.SetKeyName(0, "VSObject_Module.bmp");
-            this.imageListComponent.Images.SetKeyName(1, "VSObject_Namespace.bmp");
-            this.imageListComponent.Images.SetKeyName(2, "VSObject_Class.bmp");
-            this.imageListComponent.Images.SetKeyName(3, "VSObject_Method.bmp");
+            this.imageListComponent.Images.SetKeyName(0, "Control_Form.bmp");
+            this.imageListComponent.Images.SetKeyName(1, "VSObject_Module.bmp");
+            this.imageListComponent.Images.SetKeyName(2, "VSObject_Namespace.bmp");
+            this.imageListComponent.Images.SetKeyName(3, "VSObject_Class.bmp");
+            this.imageListComponent.Images.SetKeyName(4, "VSObject_Method.bmp");
             // 
             // menuMain
             // 

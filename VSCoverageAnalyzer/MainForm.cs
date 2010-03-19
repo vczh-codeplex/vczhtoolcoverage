@@ -22,7 +22,7 @@ namespace VSCoverageAnalyzer
             "Blocks Not Covered",
             "Blocks Not Covered%"
         };
-        private CoverageItem[] items = new CoverageItem[] { };
+        private CoverageItem profile = new CoverageItem() { Name = "Profile", CoverageType = CoverageType.Profile };
         private string sortingColumn = null;
         private bool sortingAscending = true;
 
@@ -126,12 +126,15 @@ namespace VSCoverageAnalyzer
 
         private void LoadItem(CoverageItem item)
         {
-            listViewResults.Items.Add(item.ControlItem);
-            if (item.Opening)
+            if (item.Visible)
             {
-                foreach (CoverageItem subItem in item.Items)
+                listViewResults.Items.Add(item.ControlItem);
+                if (item.Opening)
                 {
-                    LoadItem(subItem);
+                    foreach (CoverageItem subItem in item.Items)
+                    {
+                        LoadItem(subItem);
+                    }
                 }
             }
         }
@@ -139,11 +142,8 @@ namespace VSCoverageAnalyzer
         private void ReloadItems()
         {
             listViewResults.Items.Clear();
-            foreach (CoverageItem item in this.items)
-            {
-                item.BuildControlItems(0, this.selectedColumns);
-                LoadItem(item);
-            }
+            this.profile.BuildControlItems(0, this.selectedColumns);
+            LoadItem(this.profile);
         }
 
         public MainForm()
@@ -179,7 +179,7 @@ namespace VSCoverageAnalyzer
             if (dialogOpen.ShowDialog() == DialogResult.OK)
             {
                 XDocument document = XDocument.Load(dialogOpen.FileName);
-                this.items = CoverageReader.GetModules(document);
+                this.profile = CoverageReader.GetModules(document);
                 ReloadItems();
             }
         }
@@ -217,6 +217,24 @@ namespace VSCoverageAnalyzer
             this.sortingColumn = name;
             listViewResults.Columns[e.Column].Text += "(" + (this.sortingAscending ? "A-Z" : "Z-A") + ")";
             listViewResults.Sort();
+        }
+
+        private void listViewResults_KeyUp(object sender, KeyEventArgs e)
+        {
+            switch (e.KeyCode)
+            {
+                case Keys.Delete:
+                    foreach (ListViewItem item in listViewResults.SelectedItems)
+                    {
+                        (item.Tag as CoverageItem).Visible = false;
+                    }
+                    ReloadItems();
+                    break;
+                case Keys.Escape:
+                    this.profile.SetAllVisible();
+                    ReloadItems();
+                    break;
+            }
         }
     }
 }
