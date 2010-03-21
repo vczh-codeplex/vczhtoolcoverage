@@ -10,6 +10,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Reflection;
 using System.Collections;
+using System.Xml;
 
 namespace VSCoverageAnalyzer
 {
@@ -292,6 +293,15 @@ namespace VSCoverageAnalyzer
         {
             if (dialogOpen.ShowDialog() == DialogResult.OK)
             {
+                try
+                {
+                    this.profile.SetGlobalFilterXmlDocument(XDocument.Load(XmlReader.Create(dialogOpen.FileName)));
+                    ReloadItems();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 
@@ -299,6 +309,14 @@ namespace VSCoverageAnalyzer
         {
             if (dialogSave.ShowDialog() == DialogResult.OK)
             {
+                try
+                {
+                    this.profile.GetGlobalFilterXmlDocument().Save(dialogSave.FileName);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
 

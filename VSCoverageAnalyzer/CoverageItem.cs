@@ -360,6 +360,63 @@ namespace VSCoverageAnalyzer
             this.Filter = CoverageFilter.FromXml(document);
         }
 
+        public XElement GetGlobalFilterXml()
+        {
+            XElement[] elements = this.items.Select(i => i.GetGlobalFilterXml()).Where(e => e != null).ToArray();
+            if (this.Parent == null || this.filter != null || elements.Length > 0)
+            {
+                return new XElement("item",
+                    new XAttribute("name", this.Name),
+                    new XElement("filter", this.filter == null ? new XElement("true") : this.filter.GetXml()),
+                    new XElement("children", this.items.Select(i => i.GetGlobalFilterXml()))
+                    );
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        public void SetGlobalFilterXml(XElement element)
+        {
+            CoverageFilter filter = this.Filter;
+            try
+            {
+                this.Filter = CoverageFilter.FromXml(element.Element("filter").Elements().First());
+                Dictionary<string, XElement> itemElements = new Dictionary<string, XElement>();
+                foreach (XElement itemElement in element.Element("children").Elements("item"))
+                {
+                    itemElements[itemElement.Attribute("name").Value] = itemElement;
+                }
+                foreach (CoverageItem item in this.items)
+                {
+                    if (itemElements.ContainsKey(item.Name))
+                    {
+                        item.SetGlobalFilterXml(itemElements[item.Name]);
+                    }
+                    else
+                    {
+                        item.Filter = null;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                this.Filter = filter;
+                throw;
+            }
+        }
+
+        public XDocument GetGlobalFilterXmlDocument()
+        {
+            return new XDocument(GetGlobalFilterXml());
+        }
+
+        public void SetGlobalFilterXmlDocument(XDocument document)
+        {
+            SetGlobalFilterXml(document.Root);
+        }
+
         #endregion
 
         public static string[] Properties
