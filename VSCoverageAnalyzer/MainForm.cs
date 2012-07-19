@@ -333,5 +333,38 @@ namespace VSCoverageAnalyzer
             clearFilterToolStripMenuItem.Enabled = selected && !selectedProfiler;
             setAllVisibleToolStripMenuItem.Enabled = selected && !selectedProfiler;
         }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string data = "";
+            ListView listView = listViewResults;
+
+            if (listView != null)
+            {
+                foreach (ListViewItem item in listView.SelectedItems)
+                {
+                    string line = "";
+                    bool isFirst = true;
+
+                    foreach (ListViewItem.ListViewSubItem subItem in item.SubItems)
+                        if (isFirst)
+                        {
+                            line += subItem.Text;
+                            isFirst = false;
+                        }
+                        else
+                            line += "\t" + subItem.Text;
+
+                    data += line + "\r\n";
+                }
+                Clipboard.SetDataObject(data, true);
+            }
+        }
+
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem item in listViewResults.Items)
+                item.Selected = true;
+        }
     }
 }
